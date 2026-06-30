@@ -1,0 +1,20 @@
+﻿# Python
+backend/venv/
+backend/__pycache__/
+backend/app/__pycache__/
+backend/app/routers/__pycache__/
+*.pyc
+
+# Environment variables (secrets - never upload)
+backend/.env
+
+# Uploaded files
+backend/uploads/
+
+# Node
+frontend/node_modules/
+frontend/build/
+
+# OS files
+.DS_Store
+Thumbs.db
