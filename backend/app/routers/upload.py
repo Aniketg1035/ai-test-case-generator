@@ -27,8 +27,10 @@ def extract_text_from_docx(file_path):
 
 @router.post("/upload")
 async def upload_file(file: UploadFile = File(...)):
-    # File type check
-    if not file.filename.endswith((".pdf", ".docx")):
+    filename = file.filename.lower()
+
+    # Extension check (mobile pe bhi kaam karega)
+    if not (filename.endswith(".pdf") or filename.endswith(".docx")):
         raise HTTPException(status_code=400, detail="Only PDF or DOCX files allowed!")
 
     file_path = os.path.join(UPLOAD_DIR, file.filename)
@@ -38,10 +40,13 @@ async def upload_file(file: UploadFile = File(...)):
         shutil.copyfileobj(file.file, buffer)
 
     # Extract text based on file type
-    if file.filename.endswith(".pdf"):
-        extracted_text = extract_text_from_pdf(file_path)
-    else:
-        extracted_text = extract_text_from_docx(file_path)
+    try:
+        if filename.endswith(".pdf"):
+            extracted_text = extract_text_from_pdf(file_path)
+        else:
+            extracted_text = extract_text_from_docx(file_path)
+    except Exception as e:
+        raise HTTPException(status_code=422, detail=f"Could not read file: {str(e)}")
 
     if not extracted_text:
         raise HTTPException(status_code=422, detail="Could not extract text from file. Is it a scanned image?")
@@ -49,6 +54,6 @@ async def upload_file(file: UploadFile = File(...)):
     return JSONResponse({
         "filename": file.filename,
         "message": "File uploaded and text extracted successfully!",
-        "extracted_text": extracted_text,              # FULL text (analyze ke liye)
-        "extracted_text_preview": extracted_text[:500] # Preview only
+        "extracted_text": extracted_text,
+        "extracted_text_preview": extracted_text[:500]
     })
