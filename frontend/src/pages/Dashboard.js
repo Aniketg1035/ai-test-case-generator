@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 
+const API_URL = 'https://ai-test-case-generator-xjne.onrender.com';
+
 const styles = {
   body: {
     minHeight: '100vh',
@@ -82,7 +84,6 @@ const styles = {
     marginTop: '60px',
     fontSize: '16px',
   },
-  // Modal styles
   modalOverlay: {
     position: 'fixed',
     top: 0, left: 0, right: 0, bottom: 0,
@@ -151,7 +152,7 @@ function Dashboard() {
 
   const fetchProjects = async () => {
     try {
-      const response = await axios.get('http://127.0.0.1:8000/api/projects');
+      const response = await axios.get(`${API_URL}/api/projects`);
       setProjects(response.data);
     } catch (err) {
       console.error('Failed to fetch projects', err);
@@ -162,7 +163,7 @@ function Dashboard() {
   const openProject = async (id) => {
     setLoadingDetail(true);
     try {
-      const response = await axios.get(`http://127.0.0.1:8000/api/projects/${id}`);
+      const response = await axios.get(`${API_URL}/api/projects/${id}`);
       setSelectedProject(response.data);
     } catch (err) {
       console.error('Failed to fetch project details', err);
@@ -192,11 +193,7 @@ function Dashboard() {
       {!loading && projects.length > 0 && (
         <div style={styles.grid}>
           {projects.map((p) => (
-            <div
-              key={p.id}
-              style={styles.card}
-              onClick={() => openProject(p.id)}
-            >
+            <div key={p.id} style={styles.card} onClick={() => openProject(p.id)}>
               <div style={styles.cardTitle}>📁 {p.name}</div>
               <div style={styles.cardDesc}>{p.description}</div>
               <div style={styles.cardFooter}>
@@ -208,7 +205,6 @@ function Dashboard() {
         </div>
       )}
 
-      {/* Modal for project details */}
       {selectedProject && (
         <div style={styles.modalOverlay} onClick={() => setSelectedProject(null)}>
           <div style={styles.modalBox} onClick={(e) => e.stopPropagation()}>
@@ -216,9 +212,7 @@ function Dashboard() {
               <h2 style={{ color: '#00d2ff', fontSize: '20px' }}>{selectedProject.name}</h2>
               <button style={styles.closeBtn} onClick={() => setSelectedProject(null)}>✕</button>
             </div>
-
             {loadingDetail && <p style={styles.loading}>Loading...</p>}
-
             {!loadingDetail && selectedProject.test_cases.map((tc) => (
               <div key={tc.id} style={styles.testItem}>
                 <div style={styles.testTitle}>

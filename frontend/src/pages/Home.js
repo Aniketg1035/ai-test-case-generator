@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 
+const API_URL = 'https://ai-test-case-generator-xjne.onrender.com';
+
 const styles = {
   body: {
     minHeight: '100vh',
@@ -223,7 +225,7 @@ function Home() {
     setError('');
     setResult(null);
     try {
-      const response = await axios.post('http://127.0.0.1:8000/api/analyze', { text });
+      const response = await axios.post(`${API_URL}/api/analyze`, { text });
       setResult(response.data);
     } catch (err) {
       setError('Error: ' + err.message);
@@ -241,7 +243,7 @@ function Home() {
     const formData = new FormData();
     formData.append('file', file);
     try {
-      const response = await axios.post('http://127.0.0.1:8000/api/upload', formData, {
+      const response = await axios.post(`${API_URL}/api/upload`, formData, {
         headers: { 'Content-Type': 'multipart/form-data' },
       });
       setText(response.data.extracted_text);
@@ -256,7 +258,7 @@ function Home() {
     if (!result) return;
     try {
       const response = await axios.post(
-        'http://127.0.0.1:8000/api/export/excel',
+        `${API_URL}/api/export/excel`,
         { test_cases: result.functional_tests.map(tc => ({
           title: tc.title,
           steps: tc.steps,
@@ -281,7 +283,7 @@ function Home() {
     if (!result) return;
     try {
       const response = await axios.post(
-        'http://127.0.0.1:8000/api/export/pdf',
+        `${API_URL}/api/export/pdf`,
         { test_cases: result.functional_tests.map(tc => ({
           title: tc.title,
           steps: tc.steps,
@@ -319,17 +321,13 @@ function Home() {
         .upload-box:hover { border-color: rgba(0,210,255,0.8) !important; background: rgba(0,210,255,0.05); }
       `}</style>
 
-      {/* Header */}
       <div style={styles.header}>
         <div style={styles.logo}>🤖</div>
         <h1 style={styles.title}>AI Test Case Generator</h1>
         <p style={styles.subtitle}>✨ Powered by Groq AI — Generate test cases in seconds</p>
       </div>
 
-      {/* Input Card */}
       <div style={styles.card}>
-
-        {/* File Upload Section */}
         <label style={styles.label}>📁 UPLOAD PDF OR WORD FILE (Optional)</label>
         <div className="upload-box" style={styles.uploadBox}>
           <div style={{fontSize: '36px'}}>📄</div>
@@ -351,7 +349,6 @@ function Home() {
         </div>
         {uploadMsg && <p style={styles.success}>{uploadMsg}</p>}
 
-        {/* Text Input */}
         <label style={styles.label}>📋 OR PASTE YOUR SOFTWARE REQUIREMENTS</label>
         <textarea
           value={text}
@@ -365,21 +362,13 @@ function Home() {
         {error && <p style={styles.error}>❌ {error}</p>}
       </div>
 
-      {/* Results */}
       {result && (
         <div className="result-section" style={{ maxWidth: '800px', margin: '0 auto' }}>
-
-          {/* Export Buttons */}
           <div style={styles.exportRow}>
-            <button style={styles.exportBtnExcel} onClick={exportExcel}>
-              📊 Export to Excel
-            </button>
-            <button style={styles.exportBtnPdf} onClick={exportPdf}>
-              📄 Export to PDF
-            </button>
+            <button style={styles.exportBtnExcel} onClick={exportExcel}>📊 Export to Excel</button>
+            <button style={styles.exportBtnPdf} onClick={exportPdf}>📄 Export to PDF</button>
           </div>
 
-          {/* Stats */}
           <div style={styles.statsRow}>
             <div style={styles.statBox}>
               <div style={styles.statNum}>{result.functional_tests?.length || 0}</div>
@@ -395,7 +384,6 @@ function Home() {
             </div>
           </div>
 
-          {/* Functional Tests */}
           <div style={styles.card}>
             <div style={{...styles.sectionTitle, color: '#00d2ff'}}>✅ Functional Test Cases</div>
             {result.functional_tests?.map((tc, i) => (
@@ -408,7 +396,6 @@ function Home() {
             ))}
           </div>
 
-          {/* Edge Cases */}
           <div style={styles.card}>
             <div style={{...styles.sectionTitle, color: '#ff6b6b'}}>⚠️ Edge Cases</div>
             {result.edge_cases?.map((ec, i) => (
@@ -419,7 +406,6 @@ function Home() {
             ))}
           </div>
 
-          {/* Risk Analysis */}
           <div style={styles.card}>
             <div style={{...styles.sectionTitle, color: '#ffc107'}}>🔥 Risk Analysis</div>
             {result.risks?.map((r, i) => (
@@ -433,7 +419,6 @@ function Home() {
               </div>
             ))}
           </div>
-
         </div>
       )}
     </div>
