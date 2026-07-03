@@ -26,10 +26,7 @@ const styles = {
     WebkitTextFillColor: 'transparent',
     margin: '10px 0',
   },
-  subtitle: {
-    color: '#aaa',
-    fontSize: '16px',
-  },
+  subtitle: { color: '#aaa', fontSize: '16px' },
   card: {
     background: 'rgba(255,255,255,0.05)',
     backdropFilter: 'blur(10px)',
@@ -120,17 +117,8 @@ const styles = {
     fontWeight: 'bold',
     cursor: 'pointer',
   },
-  error: {
-    color: '#ff6b6b',
-    textAlign: 'center',
-    marginTop: '10px',
-  },
-  success: {
-    color: '#00d2ff',
-    textAlign: 'center',
-    marginTop: '10px',
-    fontSize: '14px',
-  },
+  error: { color: '#ff6b6b', textAlign: 'center', marginTop: '10px' },
+  success: { color: '#00d2ff', textAlign: 'center', marginTop: '10px', fontSize: '14px' },
   sectionTitle: {
     fontSize: '22px',
     fontWeight: 'bold',
@@ -160,6 +148,20 @@ const styles = {
     padding: '18px',
     marginBottom: '12px',
   },
+  apiCard: {
+    background: 'rgba(46,213,115,0.07)',
+    border: '1px solid rgba(46,213,115,0.2)',
+    borderRadius: '12px',
+    padding: '18px',
+    marginBottom: '12px',
+  },
+  bugCard: {
+    background: 'rgba(255,71,87,0.07)',
+    border: '1px solid rgba(255,71,87,0.2)',
+    borderRadius: '12px',
+    padding: '18px',
+    marginBottom: '12px',
+  },
   badge: {
     display: 'inline-block',
     padding: '3px 12px',
@@ -170,17 +172,18 @@ const styles = {
     color: 'white',
     marginTop: '8px',
   },
-  cardTitle: {
-    color: 'white',
+  methodBadge: {
+    display: 'inline-block',
+    padding: '3px 12px',
+    borderRadius: '20px',
+    fontSize: '12px',
     fontWeight: 'bold',
-    fontSize: '16px',
-    marginBottom: '8px',
+    background: 'linear-gradient(90deg, #2ed573, #1e90ff)',
+    color: 'white',
+    marginRight: '8px',
   },
-  cardText: {
-    color: '#ccc',
-    fontSize: '14px',
-    marginBottom: '4px',
-  },
+  cardTitle: { color: 'white', fontWeight: 'bold', fontSize: '16px', marginBottom: '8px' },
+  cardText: { color: '#ccc', fontSize: '14px', marginBottom: '4px' },
   statsRow: {
     display: 'flex',
     gap: '15px',
@@ -194,7 +197,7 @@ const styles = {
     borderRadius: '12px',
     padding: '15px 25px',
     textAlign: 'center',
-    minWidth: '120px',
+    minWidth: '100px',
   },
   statNum: {
     fontSize: '28px',
@@ -203,11 +206,7 @@ const styles = {
     WebkitBackgroundClip: 'text',
     WebkitTextFillColor: 'transparent',
   },
-  statLabel: {
-    color: '#aaa',
-    fontSize: '12px',
-    marginTop: '4px',
-  },
+  statLabel: { color: '#aaa', fontSize: '12px', marginTop: '4px' },
 };
 
 function Home() {
@@ -260,10 +259,7 @@ function Home() {
       const response = await axios.post(
         `${API_URL}/api/export/excel`,
         { test_cases: result.functional_tests.map(tc => ({
-          title: tc.title,
-          steps: tc.steps,
-          expected: tc.expected,
-          priority: tc.priority,
+          title: tc.title, steps: tc.steps, expected: tc.expected, priority: tc.priority,
         }))},
         { responseType: 'blob' }
       );
@@ -285,10 +281,7 @@ function Home() {
       const response = await axios.post(
         `${API_URL}/api/export/pdf`,
         { test_cases: result.functional_tests.map(tc => ({
-          title: tc.title,
-          steps: tc.steps,
-          expected: tc.expected,
-          priority: tc.priority,
+          title: tc.title, steps: tc.steps, expected: tc.expected, priority: tc.priority,
         }))},
         { responseType: 'blob' }
       );
@@ -317,7 +310,7 @@ function Home() {
         }
         .result-section { animation: fadeIn 0.5s ease; }
         button:hover { transform: scale(1.05); box-shadow: 0 0 20px rgba(0,210,255,0.5); }
-        textarea:focus { border-color: rgba(0,210,255,0.6) !important; box-shadow: 0 0 15px rgba(0,210,255,0.2); }
+        textarea:focus { border-color: rgba(0,210,255,0.6) !important; }
         .upload-box:hover { border-color: rgba(0,210,255,0.8) !important; background: rgba(0,210,255,0.05); }
       `}</style>
 
@@ -334,13 +327,7 @@ function Home() {
           <div style={{color: '#aaa', fontSize: '14px', margin: '8px 0'}}>
             {fileName ? `Selected: ${fileName}` : 'Drag & drop or click to upload PDF / DOCX'}
           </div>
-          <input
-            type="file"
-            accept=".pdf,.docx"
-            onChange={handleFileUpload}
-            style={{display: 'none'}}
-            id="fileInput"
-          />
+          <input type="file" accept=".pdf,.docx" onChange={handleFileUpload} style={{display:'none'}} id="fileInput" />
           <label htmlFor="fileInput">
             <button style={styles.uploadBtn} onClick={() => document.getElementById('fileInput').click()}>
               {uploading ? '⏳ Uploading...' : '📂 Choose File'}
@@ -364,11 +351,14 @@ function Home() {
 
       {result && (
         <div className="result-section" style={{ maxWidth: '800px', margin: '0 auto' }}>
+
+          {/* Export Buttons */}
           <div style={styles.exportRow}>
             <button style={styles.exportBtnExcel} onClick={exportExcel}>📊 Export to Excel</button>
             <button style={styles.exportBtnPdf} onClick={exportPdf}>📄 Export to PDF</button>
           </div>
 
+          {/* Stats */}
           <div style={styles.statsRow}>
             <div style={styles.statBox}>
               <div style={styles.statNum}>{result.functional_tests?.length || 0}</div>
@@ -380,10 +370,19 @@ function Home() {
             </div>
             <div style={styles.statBox}>
               <div style={styles.statNum}>{result.risks?.length || 0}</div>
-              <div style={styles.statLabel}>Risks Found</div>
+              <div style={styles.statLabel}>Risks</div>
+            </div>
+            <div style={styles.statBox}>
+              <div style={styles.statNum}>{result.api_tests?.length || 0}</div>
+              <div style={styles.statLabel}>API Tests</div>
+            </div>
+            <div style={styles.statBox}>
+              <div style={styles.statNum}>{result.bug_reports?.length || 0}</div>
+              <div style={styles.statLabel}>Bug Reports</div>
             </div>
           </div>
 
+          {/* Functional Tests */}
           <div style={styles.card}>
             <div style={{...styles.sectionTitle, color: '#00d2ff'}}>✅ Functional Test Cases</div>
             {result.functional_tests?.map((tc, i) => (
@@ -396,6 +395,7 @@ function Home() {
             ))}
           </div>
 
+          {/* Edge Cases */}
           <div style={styles.card}>
             <div style={{...styles.sectionTitle, color: '#ff6b6b'}}>⚠️ Edge Cases</div>
             {result.edge_cases?.map((ec, i) => (
@@ -406,6 +406,38 @@ function Home() {
             ))}
           </div>
 
+          {/* API Tests */}
+          <div style={styles.card}>
+            <div style={{...styles.sectionTitle, color: '#2ed573'}}>🔌 API Test Scenarios</div>
+            {result.api_tests?.map((at, i) => (
+              <div key={i} style={styles.apiCard}>
+                <div style={styles.cardTitle}>
+                  <span style={styles.methodBadge}>{at.method}</span>
+                  {at.endpoint}
+                </div>
+                <div style={styles.cardText}><b style={{color:'#2ed573'}}>Description:</b> {at.description}</div>
+                <div style={styles.cardText}><b style={{color:'#2ed573'}}>Expected Response:</b> {at.expected_response}</div>
+              </div>
+            ))}
+          </div>
+
+          {/* Bug Reports */}
+          <div style={styles.card}>
+            <div style={{...styles.sectionTitle, color: '#ff4757'}}>🐛 Bug Report Templates</div>
+            {result.bug_reports?.map((br, i) => (
+              <div key={i} style={styles.bugCard}>
+                <div style={styles.cardTitle}>🔴 {br.title}</div>
+                <div style={styles.cardText}><b style={{color:'#ff4757'}}>Steps to Reproduce:</b> {br.steps_to_reproduce}</div>
+                <div style={styles.cardText}><b style={{color:'#ff4757'}}>Expected:</b> {br.expected}</div>
+                <div style={styles.cardText}><b style={{color:'#ff4757'}}>Actual:</b> {br.actual}</div>
+                <span style={{...styles.badge, background: br.severity === 'High' ? '#ff4757' : '#ffa502'}}>
+                  {br.severity}
+                </span>
+              </div>
+            ))}
+          </div>
+
+          {/* Risk Analysis */}
           <div style={styles.card}>
             <div style={{...styles.sectionTitle, color: '#ffc107'}}>🔥 Risk Analysis</div>
             {result.risks?.map((r, i) => (
@@ -419,6 +451,7 @@ function Home() {
               </div>
             ))}
           </div>
+
         </div>
       )}
     </div>

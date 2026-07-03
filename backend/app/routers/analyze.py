@@ -25,7 +25,9 @@ async def analyze_requirements(request: AnalyzeRequest, db: Session = Depends(ge
     prompt += "Structure: "
     prompt += '{"functional_tests":[{"title":"t","steps":"s","expected":"e","priority":"High"}],'
     prompt += '"edge_cases":[{"title":"t","description":"d"}],'
-    prompt += '"risks":[{"area":"a","severity":"High","description":"d"}]}'
+    prompt += '"risks":[{"area":"a","severity":"High","description":"d"}],'
+    prompt += '"api_tests":[{"endpoint":"e","method":"GET","description":"d","expected_response":"r"}],'
+    prompt += '"bug_reports":[{"title":"t","severity":"High","steps_to_reproduce":"s","expected":"e","actual":"a"}]}'
     prompt += " Requirements: " + request.text
 
     try:
@@ -84,6 +86,29 @@ async def analyze_requirements(request: AnalyzeRequest, db: Session = Depends(ge
                 title=r.get("area", ""),
                 description=r.get("description", ""),
                 priority=r.get("severity", "Medium")
+            )
+            db.add(test_case)
+
+        for at in result.get("api_tests", []):
+            test_case = TestCase(
+                document_id=document.id,
+                type="api_test",
+                title=at.get("endpoint", ""),
+                steps=at.get("method", ""),
+                description=at.get("description", ""),
+                expected_result=at.get("expected_response", ""),
+            )
+            db.add(test_case)
+
+        for br in result.get("bug_reports", []):
+            test_case = TestCase(
+                document_id=document.id,
+                type="bug_report",
+                title=br.get("title", ""),
+                steps=br.get("steps_to_reproduce", ""),
+                description=br.get("actual", ""),
+                expected_result=br.get("expected", ""),
+                priority=br.get("severity", "Medium")
             )
             db.add(test_case)
 
